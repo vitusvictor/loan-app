@@ -34,7 +34,7 @@ public class LoanProcessingImpl implements LoanProcessing {
         LoanQualificationResponse<LoanProduct> loanQualificationResponse = new LoanQualificationResponse<>();
 
         if (loanStatus.equals("Not Qualified")) {
-            loanQualificationResponse.setMessage("Qualified for loan package B");
+            loanQualificationResponse.setMessage("You do not qualify for any loan package");
             loanQualificationResponse.setPack(null);
             loanQualificationResponse.setStatus(HttpStatus.OK);
 
@@ -48,14 +48,14 @@ public class LoanProcessingImpl implements LoanProcessing {
            loanProduct.setTenure(30);
            loanProduct.setAmount(BigDecimal.valueOf(25000));
 
-           loanQualificationResponse.setMessage("Qualified for loan package B");
+           loanQualificationResponse.setMessage("Qualified for loan package B. Loan processed.");
 
         } else {
             loanProduct.setPercentage(BigDecimal.valueOf(10));
             loanProduct.setTenure(15);
             loanProduct.setAmount(BigDecimal.valueOf(10000));
 
-            loanQualificationResponse.setMessage("Qualified for loan package A");
+            loanQualificationResponse.setMessage("Qualified for loan package A. Loan processed.");
         }
 
         loanQualificationResponse.setPack(loanProduct);

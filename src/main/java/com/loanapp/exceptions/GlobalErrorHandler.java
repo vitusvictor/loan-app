@@ -37,7 +37,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handlerUserNotFound(final UserNotFoundException ex){
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setMessage(ex.getMessage());
-        errorResponse.setDebugMessage("Users not found!");
+        errorResponse.setDebugMessage("User not found!");
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 

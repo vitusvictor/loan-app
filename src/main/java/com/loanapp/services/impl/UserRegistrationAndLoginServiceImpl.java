@@ -19,8 +19,6 @@ import com.loanapp.util.Constant;
 import com.loanapp.validations.ConfirmationToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -36,7 +34,6 @@ public class UserRegistrationAndLoginServiceImpl implements UserRegistrationAndL
     private final ConfirmationTokenService confirmTokenService;
     private final WalletService walletService;
     private final HttpSession httpSession;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public String registerUser(UserRegistrationDto userRegistrationDto) {
@@ -44,7 +41,6 @@ public class UserRegistrationAndLoginServiceImpl implements UserRegistrationAndL
                 .firstName(userRegistrationDto.getFirstName())
                 .lastName(userRegistrationDto.getLastName())
                 .email(userRegistrationDto.getEmail())
-                .pin(bCryptPasswordEncoder.encode(userRegistrationDto.getPin()))
                 .password(userRegistrationDto.getPassword())
                 .phoneNumber(userRegistrationDto.getPhoneNumber())
                 .userStatus(UserStatus.INACTIVE)
@@ -52,7 +48,8 @@ public class UserRegistrationAndLoginServiceImpl implements UserRegistrationAndL
                 .qualified(true)
                 .build();
 
-        Wallet wallet = walletService.createWallet(user);
+        User user1 = userRepository.save(user);
+        Wallet wallet = walletService.createWallet(user1);
         user.setWallet(wallet);
 
         String token = UUID.randomUUID().toString();
@@ -141,7 +138,7 @@ public class UserRegistrationAndLoginServiceImpl implements UserRegistrationAndL
     @Override
     public String login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail()).
-                orElseThrow(()-> new UsernameNotFoundException("User not found!"));
+                orElseThrow(()-> new UserNotFoundException("User not found"));
 
         if (user.getUserStatus() != UserStatus.ACTIVE){
             ConfirmationToken confirmationToken = confirmationTokenRepository.findConfirmationTokenByUser(user)
@@ -154,10 +151,7 @@ public class UserRegistrationAndLoginServiceImpl implements UserRegistrationAndL
             return "Please verify your account from your email";
         }
 
-        if (user.getPassword().equals(bCryptPasswordEncoder.encode(loginDto.getPassword()))) {
-            System.out.println(user.getPassword());
-            System.out.println(loginDto.getPassword());
-
+        if (user.getPassword().equals(loginDto.getPassword())) {
             httpSession.setAttribute("user_id", user.getId());
             return "Login successful";
         }

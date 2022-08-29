@@ -18,12 +18,12 @@ import java.time.LocalDateTime;
 @Entity
 public class Wallet {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     private BigDecimal balance;
 
-    @Column(length = 10, unique = true) // uuid generated
     @NotNull
     private String accountNumber;
 

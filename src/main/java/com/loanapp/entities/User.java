@@ -1,10 +1,8 @@
 package com.loanapp.entities;
 
 import javax.validation.constraints.*;
-
 import com.loanapp.enums.UserStatus;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -17,6 +15,7 @@ import java.util.List;
 @Entity
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -36,9 +35,6 @@ public class User {
     @Column(columnDefinition = "TEXT")
     @NotNull
     private String password;
-
-    @NotNull
-    private String pin;
 
     @OneToOne(mappedBy = "user")
     private Wallet wallet;
